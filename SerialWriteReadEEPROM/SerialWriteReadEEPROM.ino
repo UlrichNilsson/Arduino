@@ -2,12 +2,9 @@
 
 void setup() {
   Serial.begin(9600);
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
 }
 
 void loop() {
-  //String x;
   String data = "";
     Serial.println("Read and write to EEPROM from Serial window. Following commands can be used");
     Serial.println("read EEPROMAdress");
@@ -15,23 +12,22 @@ void loop() {
     
     while(data.equals("")){
     data = Serial.readStringUntil('\n');
+    
   }
+
+String command = data.substring(0,data.indexOf(" "));
+String options = data.substring(data.indexOf(" ") + 1,data.length());
+    
   
-if(data.substring(0,4) == "read")
+if(command == "read")
 {
-        Serial.println("read EEPROMAdress");
-        Serial.print("read Adress : ");
-        Serial.println(data.substring(5,9));
-        Serial.print("Value stored in adress : ");
-        //Serial.println(EEPROM.read(data.substring(5,9).toInt()));
+        int addrRead = (int)options.toInt();
+        Serial.println(EEPROM.read(addrRead),DEC);    
+} else if(command == "write"){
+     
+        int addrWrite=(int)options.substring(0,options.indexOf(" ")).toInt();
+        int value=(int)options.substring(options.indexOf(" ")+1,options.length()).toInt();
         
-} else if(data.substring(0,5) == "write"){
-        Serial.println("write EEPROMAdress value");
-        Serial.print("write Adress : ");
-        Serial.println(data.substring(6,10));
-        Serial.print("Value : ");
-        Serial.println(data.substring(11));
-        //EEPROM.write(data.substring(6,10).toLong(),data.substring(11));
-        
+        EEPROM.write(addrWrite,value);
   }
 }
